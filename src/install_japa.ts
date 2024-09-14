@@ -308,7 +308,7 @@ export class InstallJapa extends BaseCommand {
 
     await writeFile(pkgJsonPath, JSON.stringify(pkgJson, null, 2))
     this.logger.action('update package.json').succeeded()
-    await this.#installPackages(this.#packageToInstall.map((pkg) => pkg + '@next'))
+    await this.#installPackages(this.#packageToInstall.map((pkg) => pkg + '@latest'))
   }
 
   /**
