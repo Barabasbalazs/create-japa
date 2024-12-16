@@ -279,7 +279,7 @@ export class InstallJapa extends BaseCommand {
 
     const testScript =
       this.projectType === 'typescript'
-        ? 'node --loader ts-node/esm --enable-source-maps bin/test.ts'
+        ? 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts'
         : 'node bin/test.js'
 
     /**
@@ -289,8 +289,10 @@ export class InstallJapa extends BaseCommand {
       await this.#createNewPkgJson(basename(this.destination), testScript)
       await this.#installPackages([
         ...this.#packageToInstall.map((pkg) => `${pkg}@latest`),
-        'ts-node',
+        'ts-node-maintained',
+        '@swc/core',
         'typescript',
+        '@adonisjs/tsconfig',
       ])
 
       return
@@ -310,6 +312,12 @@ export class InstallJapa extends BaseCommand {
     this.logger.action('update package.json').succeeded()
     await this.#installPackages(this.#packageToInstall.map((pkg) => pkg + '@latest'))
   }
+
+  /**
+   * Create or update the package.json file based upon the user selections
+   */
+
+  async #createTSconfig() {}
 
   /**
    * Print final instructions to the user
