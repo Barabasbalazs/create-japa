@@ -312,4 +312,45 @@ test.group('install', (group) => {
       process.env.npm_config_user_agent = undefined
     })
     .disableTimeout()
+
+  test('should create tsconfig.json if ts is selected and no tsconfig exists', async ({
+    assert,
+    fs,
+  }) => {
+    const command = await kernel.create(InstallJapa, [fs.basePath])
+
+    trapPrompts(command)
+
+    await command.exec()
+
+    await assert.fileExists('tsconfig.json')
+    const config = await fs.contentsJson('tsconfig.json')
+
+    assert.deepEqual(config.compilerOptions.module, 'NodeNext')
+  })
+
+  test('should update existing tsconfig.json if exists with correct module setting', async ({
+    assert,
+    fs,
+  }) => {
+    await fs.create(
+      'tsconfig.json',
+      JSON.stringify({ compilerOptions: { target: 'ESNext', lib: ['ESNext'] } })
+    )
+
+    kernel.ui.switchMode('raw')
+
+    const command = await kernel.create(InstallJapa, [fs.basePath])
+
+    trapPrompts(command)
+
+    await command.exec()
+
+    await assert.fileExists('tsconfig.json')
+    const config = await fs.contentsJson('tsconfig.json')
+
+    assert.deepEqual(config.compilerOptions.target, 'ESNext')
+    assert.deepEqual(config.compilerOptions.lib[0], 'ESNext')
+    assert.deepEqual(config.compilerOptions.module, 'NodeNext')
+  })
 })

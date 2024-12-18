@@ -343,6 +343,7 @@ export class InstallJapa extends BaseCommand {
      */
     const tsConfigJson = JSON.parse(await readFile(tsConfigPath, 'utf-8'))
     tsConfigJson.compilerOptions = {
+      ...tsConfigJson.compilerOptions,
       module: 'NodeNext',
     }
 
