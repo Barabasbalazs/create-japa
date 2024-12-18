@@ -292,7 +292,6 @@ export class InstallJapa extends BaseCommand {
         'ts-node-maintained',
         '@swc/core',
         'typescript',
-        '@adonisjs/tsconfig',
       ])
 
       return
@@ -317,7 +316,39 @@ export class InstallJapa extends BaseCommand {
    * Create or update the package.json file based upon the user selections
    */
 
-  async #createTSconfig() {}
+  async #createOrUpdateTSconfig() {
+    const tsConfigPath = join(this.destination, 'tsconfig.json')
+
+    /**
+     * Create a new tsconfig.json file when missing
+     */
+    if (!existsSync(tsConfigPath)) {
+      await this.#writeFile(
+        'tsconfig.json',
+        JSON.stringify(
+          {
+            compilerOptions: {
+              module: 'NodeNext',
+            },
+          },
+          null,
+          2
+        )
+      )
+      return
+    }
+
+    /**
+     * Update existing tsconfig.json file
+     */
+    const tsConfigJson = JSON.parse(await readFile(tsConfigPath, 'utf-8'))
+    tsConfigJson.compilerOptions = {
+      module: 'NodeNext',
+    }
+
+    await writeFile(tsConfigPath, JSON.stringify(tsConfigJson, null, 2))
+    this.logger.action('update tsconfig.json').succeeded()
+  }
 
   /**
    * Print final instructions to the user
@@ -427,6 +458,14 @@ export class InstallJapa extends BaseCommand {
      * and install dependencies
      */
     await this.#createOrUpdatePkgJson()
+
+    /**
+     * Create or update the tsconfig.json file
+     * if ts preset is selected
+     */
+    if (this.projectType === 'typescript') {
+      await this.#createOrUpdateTSconfig()
+    }
 
     this.#printSuccessSticker()
   }
