@@ -265,7 +265,7 @@ test.group('install', (group) => {
 
     assert.deepEqual(pkg.type, 'module')
     assert.deepEqual(pkg.scripts, {
-      test: 'node --loader ts-node/esm --enable-source-maps bin/test.ts',
+      test: 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts',
     })
   })
 
@@ -285,7 +285,7 @@ test.group('install', (group) => {
 
     assert.deepEqual(pkg.type, 'module')
     assert.deepEqual(pkg.scripts, {
-      test: 'node --loader ts-node/esm --enable-source-maps bin/test.ts',
+      test: 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts',
     })
     assert.deepEqual(pkg.name, 'foo')
     assert.deepEqual(pkg.description, 'blabla')
